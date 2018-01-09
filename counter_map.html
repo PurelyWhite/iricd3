@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>test</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+
+    <script>
+
+    //set canvas parameters
+    var canvasWidth = 500;
+    var canvasHeight = 500;
+    var scaleFactor = 0.5;
+
+    // create svg object and set alignment
+    var canvas = d3.select('body')
+                  .append('svg')
+                  .attr('width', canvasWidth)
+                  .attr('height', canvasHeight)
+                  .append('g')
+                  .attr('transform', 'translate(' + 0.5 * (canvasWidth - scaleFactor * canvasWidth) + ', '
+                                                    + 0.5 * (canvasHeight - scaleFactor * canvasHeight) + ')');
+
+    d3.csv('river.csv', function (data) {
+      var dataLength = data.length;
+      var polygonPointSet = [];
+      var i = 0
+      while (i < dataLength - 5) {
+        polygonPointSet.push({'x1':data[i]['x'],'x2':data[i+5]['x'],
+                              'y1':data[i]['y'],'y2':data[i+5]['y'],
+                              'z':data[i]['z']});
+        i++;
+      };
+
+      // calculate x value range
+      polygonPointSet.sort(function(a, b) {
+        return a['x'] - b['x'];
+      })
+      var xValues = [];
+      data.forEach(function(el) {
+        xValues.push(parseFloat(el['x']))
+      });
+      var xRange = d3.extent(xValues);
+
+      // calculate y value range
+      var yValues = [];
+      data.forEach(function(el) {
+        yValues.push(parseFloat(el['y']))
+      });
+      var yRange = d3.extent(yValues);
+
+      // overall horizontal scale
+      var xScale = d3.scaleLinear()
+                    .domain(xRange)
+                    .range([0, scaleFactor * canvasWidth]);
+
+      // overall vertical scale
+      var yScale = d3.scaleLinear()
+                    .domain(yRange)
+                    .range([0, scaleFactor * canvasHeight]);
+
+      var colorScale = d3.scale
+
+      canvas.selectAll('polygon')
+            .data(polygonPointSet)
+            .enter()
+            .append('polygon')
+
+            .attr('points', function (d) { return '' + d.x1 + ',' + 0 + ' '
+                                                  + d.x2 + ',' + 0 + ' '
+                                                  + d.x2 + ',' + d.y2 + ' '
+                                                  + d.x1 + ',' + d.y1 + ' ';
+
+            })
+            .attr('cx', 300)
+            .attr('cy', 500)
+            .attr('fill', 'none')
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+
+    });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>test</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<style>
+    .axis { font: 1em sans-serif; }
+    .label { font: 1em sans-serif; }
+</style>
+
+<body>
+
+    <script>
+
+    //set canvas parameters
+    var canvasWidth = 1000;
+    var canvasHeight = 1000;
+    var scaleFactor = 0.7;
+
+    // create svg object and set alignment
+    var canvas = d3.select('body')
+                  .append('svg')
+                  .attr('width', canvasWidth)
+                  .attr('height', canvasHeight)
+                  .append('g')
+                  .attr('transform', 'translate(' + 0.5 * (canvasWidth - scaleFactor * canvasWidth) + ', '
+                                                    + 0.5 * (canvasHeight - scaleFactor * canvasHeight) + ')');
+
+    d3.csv('data.csv', function (data) {
+
+        // calculate time value range
+        data.sort(function(a, b) {
+          return a.Time - b.Time;
+        })
+        var timeValues = [];
+        data.forEach(function(el) {
+          timeValues.push(parseInt(el['Time']))
+        });
+        var timeRange = d3.extent(timeValues);
+
+        // calculate discharge value range
+        var dischargeValues = [];
+        data.forEach(function(el) {
+          dischargeValues.push(parseInt(el['Discharge']))
+        });
+        var dischargeRange = d3.extent(dischargeValues);
+
+        // overall horizontal scale
+        var xScale = d3.scaleLinear()
+                      .domain(timeRange)
+                      .range([0, scaleFactor * canvasWidth]);
+
+        // overall vertical scale
+        var yScale = d3.scaleLinear()
+                      .domain(dischargeRange)
+                      .range([scaleFactor * canvasHeight, 0]);
+
+        // path scale
+        var line = d3.line()
+                      .x(function(d) { return xScale(d.Time); })
+                      .y(function(d) { return yScale(d.Discharge); });
+
+        // x-axis scale
+        var xAxis = d3.axisBottom(xScale)
+                      .tickSize(5)
+                      .tickPadding(5);
+
+        // y-axis scale
+        var yAxis = d3.axisLeft(yScale)
+                      .tickSize(5)
+                      .tickPadding(5);
+
+        // create path
+        canvas.append('g')
+                      .attr('transform', 'translate(0, 0)')
+                      .selectAll('path')
+                      .data([data])
+                      .enter()
+                      .append('path')
+                      .attr('d', line)
+                      .attr('fill', 'none')
+                      .attr('stroke', 'red')
+                      .attr('stroke-width', '1');
+
+        // x-axis positioning
+        canvas.append('g')
+                      .attr('transform', 'translate(0, ' + scaleFactor * canvasHeight + ')')
+                      .attr('class', 'axis')
+                      .call(xAxis);
+
+        // y-axis positioning
+        canvas.append('g')
+                      .attr('transform', 'translate(0, 0)')
+                      .attr('class', 'axis')
+                      .call(yAxis);
+
+        // x-axis label
+        canvas.append('text')
+                      .attr('transform', 'translate(' + 0.5 * scaleFactor * canvasWidth + ', '
+                                                      + scaleFactor * canvasHeight + ')')
+                      .attr('dy', '4em')
+                      .attr('class', 'label')
+                      .style('text-anchor', 'middle')
+                      .text('Time (s)');
+
+        // y-axis label
+        canvas.append('text')
+                      .attr('transform','rotate(-90)')
+                      .attr('dy', '-4em')
+                      .attr('x', - 0.5 * scaleFactor * canvasWidth)
+                      .attr('class', 'label')
+                      .style('text-anchor', 'middle')
+                      .text('Discharge (m^3/s)');
+
+    })
+
+    </script>
+
+</body>
+
+</html>

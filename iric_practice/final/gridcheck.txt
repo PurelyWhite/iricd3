@@ -1,0 +1,3 @@
+* Cells where edges intersect
+  Not exist
+
