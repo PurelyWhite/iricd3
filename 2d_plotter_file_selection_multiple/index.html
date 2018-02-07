@@ -5,7 +5,9 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="main.js"></script>
     <title>test</title>
-    <input type='file' id='csv' align='top' onchange='upload_button("csv")' multiple>
+    Choose CSV files: <input type='file' id='csv' accept=".csv" align='top' onchange='upload_button("csv")' multiple><p></p>
+    Y-axis step size: <input type='text' id='yStep' value='5' onchange='upload_button("csv")'><p></p>
+    X-axis step size: <input type='text' id='xStep' value='25' onchange='upload_button("csv")'><p></p>
 </head>
 
 <style>
@@ -18,6 +20,25 @@
 <body>
 
     <script>
+    // function addCheckbox(el) {
+    //   var files = document.getElementById(el).files;
+    //   for (var i = 0; i < files.length; i++) {
+    //     var reader = new FileReader;
+    //     reader.readAsDataURL(files[i]);
+    //     var filename = files[i].name;
+    //     reader.onload = function(d) {
+    //       var contents = d.target.result;
+    //       var filelabel = document.createElement('label');
+    //       var checkbox = document.createElement('input');
+    //       checkbox.setAttribute('type', 'checkbox');
+    //       checkbox.setAttribute("id", filename);
+    //       checkbox.setAttribute("value", contents);
+    //       filelabel.appendChild(document.createTextNode(filename));
+    //       filelabel.appendChild(checkbox)
+    //       document.body.appendChild(filelabel);
+    //     }
+    //   }
+    // }
     </script>
 
 </body>
